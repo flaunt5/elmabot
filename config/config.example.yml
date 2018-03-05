@@ -1,0 +1,12 @@
+global:
+  url:
+twitter:
+  accountname:
+  consumer:
+    key:
+    secret:
+  accesstoken:
+    key:
+    secret:
+discord:
+  token:

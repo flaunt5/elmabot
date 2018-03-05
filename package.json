@@ -1,0 +1,40 @@
+{
+  "name": "elmabot",
+  "version": "1.0.0",
+  "description": "automated shitposting",
+  "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/jorisbrandt2/elmabot.git"
+  },
+  "keywords": [
+    "bot",
+    "discord",
+    "anime",
+    "elma",
+    "twitter"
+  ],
+  "author": "Joris Brandt",
+  "license": "MIT",
+  "homepage": "https://bitbucket.org/jorisbrandt2/elmabot#readme",
+  "dependencies": {
+    "async": "^2.6.0",
+    "discord.js": "^11.3.0",
+    "fs": "0.0.1-security",
+    "js-yaml": "^3.10.0",
+    "sqlite3": "^3.1.13",
+    "twitter": "^1.7.1"
+  },
+  "optionalDependencies": {
+    "bufferutil": "^3.0.3"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-cli": "^1.4.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-merge": "^0.1.1",
+    "gulp-sourcemaps": "^2.6.4",
+    "gulp-uglify": "^3.0.0",
+    "gulp-util": "^3.0.8"
+  }
+}
