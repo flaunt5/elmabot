@@ -5,48 +5,55 @@ function registerTweetVotes(tweetId, users) {
     }
 }
 
-function registerTweet(body, userId, replyTo) {
+function registerTweet(body, userId, replyTo = 0) {
     let sql = db.prepare("INSERT INTO twitter (tweetDate, tweetContent, userId");
 }
 
 /**
  * A simple function to send the API call to twitter to post one or more tweets
  * Does not parse or edit whatever text it's given
- * @param {string|array} tweetBody - a parsed and readied string to be tweeted out or array of such strings
+ * @param {string} tweetBody - a parsed and readied string to be tweeted out or array of such strings
  */
-function postTweet(tweetBody) {
-    twitterClient.post('statuses/update', {status: tweetBody}, function (error, tweet, response) {
-        if(error) {
-            console.log(new Error(error));
-            return false;
-        }
-        console.log(tweet);
-    });
+function postTweet(tweetBody, VoteUsers) {
+    twitterClient.post('statuses/update', {status: tweetBody})
+        .then(function (tweet) {
+            registerTweetVotes(tweet.id_str, VoteUsers);
+        })
+        .catch(function (error) {
+            throw error;
+        })
+    ;
+    return true;
 }
 
-function multiPostTweet(bodies) {
-    async.forEachOf
-    for(let i = 0; i < bodies.length; i++) {
 
-
-    }
-}
-
-function multiTweetPromise(status, lastTweetId) {
-    let params = {status : status};
-    if(lastTweetId !== -1) {
-        params.in_reply_to_status_id = lastTweetId;
-    }
-    return new Promise(
-        function (resolve, reject) {
-            twitterClient.post("statuses/update", params, function (error, tweet, response) {
-                if(error) {
-                    reject(new Error(error));
-                }
-                resolve(tweet.id);
-            });
+function multiPostTweet(bodies, users, index = 0, lastTweetId = 0) {
+    let leng = bodies.length;
+    if(index <= leng) {
+        if(bodies[index] !== undefined) {
+            let params = {
+                status: bodies[index]
+            };
+            if(lastTweetId !== 0) {
+                params['in_reply_to_status_id'] = lastTweetId;
+            }
+            twitterClient.post('statuses/update', params)
+                .then(function (tweet) {
+                    index++;
+                    console.log(tweet);
+                    setTimeout(function () {
+                        multiPostTweet(bodies, users, index, tweet.id_str)
+                    }, 3000);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    return false;
+                })
+        } else {
+            console.dir("breaking point");
+            return true;
         }
-    );
+    }
 }
 
 /**
@@ -56,7 +63,7 @@ function multiTweetPromise(status, lastTweetId) {
  * @returns {boolean|array} FALSE if the body isn't too long to be tweeted in one tweet, array with each text bit to be tweeted otherwise
  */
 function tweetSplitter(body) {
-    let twitterPhrase = "@" + twitterUser + " ... (1/1) ",
+    let twitterPhrase = "@" + twitterUser + " ... (10/10) ",
         length = 240 - twitterPhrase.length;
     if(body.length > length) {
         let pos = length,
@@ -95,7 +102,6 @@ function tweetSplitter(body) {
             } else {
                 result[i] = result[i] + toAdd;
             }
-            console.dir(result[i]);
         }
         return result;
     } else {
@@ -109,14 +115,15 @@ function tweetSplitter(body) {
  * @param {string} body - the content to be tweeted out as an unparsed string
  * @returns {boolean}
  */
-function tweetIt(message, body) {
-    let parsedBody = parseMessage(message, body),
-        splitTweets = tweetSplitter(parsedBody),
+function tweetIt(message, body, users) {
+    let /*parsedBody = parseMessage(message, body),*/
+        splitTweets = tweetSplitter(message),
         result = false;
-    if(toTweet === false) {
-        result = postTweet(parsedBody)
+    if(splitTweets === false) {
+        console.dir("beep beep");
+        result = postTweet(parsedBody, users)
     } else {
-        result = postTweet(splitTweets);
+        result = multiPostTweet(splitTweets, users);
     }
     return result;
 }
