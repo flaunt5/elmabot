@@ -1,10 +1,5 @@
 global:
   url:
-database:
-  host: 
-  user:
-  password:
-  database:
 twitter:
   accountname:
   consumer:

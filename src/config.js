@@ -1,7 +1,7 @@
 /**Dependancies**/
 const yaml    = require('js-yaml'),
       fs      = require('fs'),
-      mysql  = require('mysql'),
+      sqlite  = require('sqlite3'),
       Discord = require('discord.js'),
       Twitter = require('twitter');
 
@@ -34,9 +34,8 @@ function getConfig(file) {
 //gets values from config file
 const config = getConfig("./config/config.yml");
 
-const db = mysql.createConnection({
-    host : ''
-})
+//set up database, needs actual database to exist or else bot gets unhappy
+const db = new sqlite.Database("./config/db.sqlite");
 
 //configure discord access
 const discordClient = new Discord.Client();
