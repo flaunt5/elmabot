@@ -6,7 +6,7 @@ const gulp = require('gulp'),
 
 gulp.task('default', function(){
     'use strict';
-    gulp.watch("src/*.js", ["build"]);
+    gulp.watch(["src/*.js", "src/parts/*.js"], ["build"]);
     return gutil.log("gulp watch task running")
 });
 
