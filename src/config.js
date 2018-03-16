@@ -3,10 +3,24 @@ const yaml    = require('js-yaml'),
       fs      = require('fs'),
       sqlite  = require('sqlite3'),
       Discord = require('discord.js'),
-      Twitter = require('twitter');
+      Twitter = require('twitter'),
+      winston = require('winston');
 
 //gets values from config file
 const config = getConfig();
+
+const logger = winston.createLogger({
+    transports: [
+        new winston.transports.File({ filename: 'config/error.log', level: 'error' }),
+        new winston.transports.File({ filename: 'config/combined.log' })
+    ]
+});
+
+if (process.env.NODE_ENV !== 'production') {
+    logger.add(new winston.transports.Console({
+        format: winston.format.simple()
+    }));
+}
 
 function getConfig() {
     try {

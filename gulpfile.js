@@ -1,3 +1,5 @@
+//TODO I'm starting to think gulp may be super fucking obsolete in this context, and I should look into simply exporting/loading modules
+
 const gulp = require('gulp'),
     gutil = require('gulp-util'),
     concat = require('gulp-concat'),
