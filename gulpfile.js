@@ -6,12 +6,12 @@ const gulp = require('gulp'),
 
 gulp.task('default', function(){
     'use strict';
-    gulp.watch(["src/*.js", "src/parts/*.js"], ["build"]);
+    gulp.watch(["src/**/*.js"], ["build"]);
     return gutil.log("gulp watch task running")
 });
 
 gulp.task('build', function () {
-    return gulp.src(['src/config.js', 'src/parts/*.js', 'src/bot.js'])
+    return gulp.src(['src/config.js', 'src/parts/*.js', 'src/parts/classes/*.js', 'src/parts/classes/**/*.js', 'src/bot.js'])
         .pipe(sourcemaps.init())
         .pipe(concat('app.js'))
         .pipe(gutil.env.type === 'production' ? uglify() : gutil.noop())
