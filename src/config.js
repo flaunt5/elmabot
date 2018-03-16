@@ -5,24 +5,12 @@ const yaml    = require('js-yaml'),
       Discord = require('discord.js'),
       Twitter = require('twitter');
 
-//puts sqlite in verbose mode for development purposes
-if(process.env.NODE_ENV !== "production") {
-    sqlite.verbose();
-}
+//gets values from config file
+const config = getConfig();
 
-/**other constants**/
-const userReplace = "@nerd",
-      roleReplace = "@nerds",
-      commandWord = new RegExp("^e&(\\w+)", "mi")
-
-/**
- * Gets the YAML config file
- * @param file - String, location of config file
- * @returns {*}
- */
-function getConfig(file) {
+function getConfig() {
     try {
-        let conf = yaml.safeLoad(fs.readFileSync(file, 'utf8'));
+        let conf = yaml.safeLoad(fs.readFileSync("./config/config.yml", 'utf8'));
         let jsonConf = JSON.stringify(conf, null, 4);
         return JSON.parse(jsonConf);
     } catch (e) {
@@ -31,11 +19,18 @@ function getConfig(file) {
     }
 }
 
-//gets values from config file
-const config = getConfig("./config/config.yml");
+/**other constants**/
+const userReplace = "@" + config.global.replace,
+      roleReplace = userReplace + "s",
+      prefix = new RegExp("^" + config.global.prefix + "(\\w+)", "mi");
 
 //set up database, needs actual database to exist or else bot gets unhappy
 const db = new sqlite.Database("./config/db.sqlite");
+
+//puts sqlite in verbose mode for development purposes
+if(process.env.NODE_ENV !== "production") {
+    sqlite.verbose();
+}
 
 //configure discord access
 const discordClient = new Discord.Client();
@@ -48,11 +43,3 @@ const twitterClient = new Twitter({
     access_token_key: config.twitter.accesstoken.key,
     access_token_secret: config.twitter.accesstoken.secret
 });
-//twitter username needed for threading tweets
-const twitterUser = config.twitter.accountname;
-
-//TODO make this not bad
-//quick and dirty list of commands
-const commandList = "-commands: lists all currently available bot commands\n" +
-    "-alias: assigns a new nickname or alias to another user, aliases will be replaced in tweets as well\n" +
-    "-help: ask me what I can do 😃\n";
