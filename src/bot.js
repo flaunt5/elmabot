@@ -2,25 +2,18 @@ discordClient.on('ready', () => {
     console.log("bot is up and running");
 });
 
+console.log(commands);
+
 discordClient.on("message", (message, user) => {
     //No talkie to other bots
     if(message.author.bot) return;
 
     let content = message.content,
-        commandMatch = content.match(commandWord),
+        commandMatch = content.match(prefix),
         channel = message.channel;
 
-    let users = replaceMentionsUsers(message, content),
-        roles = replaceMentionsRoles(message, content);
-
-
     if (commandMatch !== null && commandMatch.length > 1) {
-        let commandReturn = baseMessageCommands(commandMatch[1], message, user);
-        if (commandReturn !== false) {
-            channel.send(commandReturn);
-        } else {
-            channel.send("I'm sorry, I don't recognize that command 😦")
-        }
+        commands.run(commandMatch[1], message);
     }
 });
 
@@ -29,7 +22,6 @@ discordClient.on('messageReactionAdd', (messReac, messUser) => {
         let theMessage = messReac.message,
             content = theMessage.content,
             users = theMessage.mentions.users.array();
-
     }
 });
 
