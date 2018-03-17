@@ -3,10 +3,13 @@ class Ecommand {
         this._commandname = "command";
         this._desc ="This command doesn't have a description yet";
         this._syntax= prefix + this.commandnamename;
-        this._message = new Emessage(message);
+        this._message = message;
+        this._emessage = new Emessage(message);
         this._reply = '';
         this._user = message.user;
         this._channel = message.channel;
+        this._error = '';
+        this._message = message;
     }
 
     get commandname() {
@@ -57,13 +60,37 @@ class Ecommand {
         this._reply = value;
     }
 
+    get message() {
+        return this._message;
+    }
+
+    set message(value) {
+        this._message = value;
+    }
+
+    get channel() {
+        return this._channel;
+    }
+
+    set channel(value) {
+        this._channel = value;
+    }
+
+    get error() {
+        return this._error;
+    }
+
+    set error(value) {
+        this._error = value;
+    }
+
     run() {
         this.reply = "hello";
         return true;
     }
 
     respond() {
-        this.message.reply(this.reply);
+        return this.message.reply(this.reply);
     }
 
 }
