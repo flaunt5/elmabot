@@ -2,7 +2,7 @@ class Commands {
     constructor() {
         this._list = {};
         this._aliaslist = {};
-        this._error = "";
+        this._ecomm = "";
     }
 
     get list() {
@@ -21,12 +21,12 @@ class Commands {
         this._aliaslist = value;
     }
 
-    get error() {
-        return this._error;
+    get ecomm() {
+        return this._ecomm;
     }
 
-    set error(value) {
-        this._error = value;
+    set ecomm(value) {
+        this._ecomm = value;
     }
 
     register(command, alias) {
@@ -40,6 +40,7 @@ class Commands {
             let alObj = this.aliaslist;
             alObj[alias[0]] = alias;
             alObj[alias[0]].shift();
+            this.aliaslist = alObj;
         } else if(typeof alias === 'string' && alias.length > 1) {
             list[alias] = command;
         }
@@ -53,18 +54,26 @@ class Commands {
             let comm = new list[command];
         }
     }
+
     run(command, message) {
         let list = this.list;
         command = command.toLowerCase();
         if(list[command] !== undefined) {
             let comm = new list[command](message);
+            this.ecomm = comm;
+
             if(comm.run()) {
                 comm.respond()
+            } else {
+                this.handleError("command found but error in execution")
             }
         } else {
             message.reply("command not recognized");
         }
+    }
 
+    handleError(error) {
+        logger.warn(error + " -- " + this.ecomm.error)
     }
 }
 
