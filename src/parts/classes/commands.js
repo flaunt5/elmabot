@@ -1,8 +1,8 @@
 class Commands {
     constructor() {
         this._list = {};
+        this._formatlist = [];
         this._aliaslist = {};
-        this._ecomm = "";
     }
 
     get list() {
@@ -13,6 +13,14 @@ class Commands {
         this._list = value;
     }
 
+    get formatlist() {
+        return this._formatlist;
+    }
+
+    set formatlist(value) {
+        this._formatlist = value;
+    }
+
     get aliaslist() {
         return this._aliaslist;
     }
@@ -21,17 +29,11 @@ class Commands {
         this._aliaslist = value;
     }
 
-    get ecomm() {
-        return this._ecomm;
-    }
-
-    set ecomm(value) {
-        this._ecomm = value;
-    }
-
     register(command, alias) {
-        let list = this.list;
+        let list = this.list,
+            name = '';
         if(Array.isArray(alias) && alias.length > 0) {
+            name = alias[0];
             for(let i = 0; i < alias.length; i++) {
                 if(typeof alias[i] === 'string') {
                     list[alias[i]] = command;
@@ -41,18 +43,13 @@ class Commands {
             alObj[alias[0]] = alias;
             alObj[alias[0]].shift();
             this.aliaslist = alObj;
+
         } else if(typeof alias === 'string' && alias.length > 1) {
             list[alias] = command;
+            name = alias;
         }
         this.list = list;
-    }
-
-    help(command = false) {
-        command = command.toLowerCase();
-        let list = this.list;
-        if(command !== false && this.list[command] !== undefined) {
-            let comm = new list[command];
-        }
+        this.formatlist.push(name);
     }
 
     run(command, message) {
@@ -60,20 +57,19 @@ class Commands {
         command = command.toLowerCase();
         if(list[command] !== undefined) {
             let comm = new list[command](message);
-            this.ecomm = comm;
 
             if(comm.run()) {
                 comm.respond()
             } else {
-                this.handleError("command found but error in execution")
+                this.handleError("command found but error in execution", comm)
             }
         } else {
             message.reply("command not recognized");
         }
     }
 
-    handleError(error) {
-        logger.warn(error + " -- " + this.ecomm.error)
+    handleError(error, comm) {
+        logger.warn(error + " -- " + "{" + comm.commandname.toUpperCase() + "}" + comm.error)
     }
 }
 
