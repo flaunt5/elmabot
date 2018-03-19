@@ -2,8 +2,6 @@ discordClient.on('ready', () => {
     console.log("bot is up and running");
 });
 
-console.log(commands);
-
 discordClient.on("message", (message, user) => {
     //No talkie to other bots
     if(message.author.bot) return;
