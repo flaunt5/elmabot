@@ -4,52 +4,31 @@ class Ecommand {
         this._desc ="This command doesn't have a description yet";
         this._syntax= prefix + this.commandnamename;
         this._message = message;
-        this._emessage = new Emessage(message);
+        this._params = this.getParams();
         this._reply = '';
-        this._user = message.user;
-        this._channel = message.channel;
+        this._member = message.member;
         this._error = '';
-        this._message = message;
+        this._replyTo = false;
+    }
+
+    get message() {
+        return this._message;
     }
 
     get commandname() {
-        return this._name;
-    }
-
-    set commandname(value) {
-        this._name = value;
-    }
-
-    get alias() {
-        return this._alias;
-    }
-
-    set alias(value) {
-        this._alias = value;
+        return this._commandname;
     }
 
     get desc() {
         return this._desc;
     }
 
-    set desc(value) {
-        this._desc = value;
-    }
-
     get syntax() {
         return this._syntax;
     }
 
-    set syntax(value) {
-        this._syntax = value;
-    }
-
-    get user() {
-        return this._user;
-    }
-
-    set user(value) {
-        this._user = value;
+    get params() {
+        return this._params;
     }
 
     get reply() {
@@ -60,20 +39,12 @@ class Ecommand {
         this._reply = value;
     }
 
-    get message() {
-        return this._message;
+    get member() {
+        return this._member;
     }
 
-    set message(value) {
-        this._message = value;
-    }
-
-    get channel() {
-        return this._channel;
-    }
-
-    set channel(value) {
-        this._channel = value;
+    set member(value) {
+        this._member = value;
     }
 
     get error() {
@@ -84,13 +55,50 @@ class Ecommand {
         this._error = value;
     }
 
+    get replyTo() {
+        return this._replyTo;
+    }
+
+    set replyTo(value) {
+        this._replyTo = value;
+    }
+
+    /**
+     * Gets an an array with all the parameters passed to a command
+     * @returns {array}
+     */
+    getParams() {
+        let string = this.message.content.match(prefix)[2];
+        if(string !== undefined) {
+            return string.split(" ");
+        } else {
+            return false;
+        }
+
+    }
+
+    /**
+     * a base run function to be expanded upon per command,
+     * this will be called by the main command object to run individual commands
+     * Each command should perform it's main functions within this umbrella function
+     * @returns {boolean}
+     */
     run() {
         this.reply = "hello";
         return true;
     }
 
+    /**
+     * A base function that returns whatever reply has been set by other base functions,
+     * the command object returns this response after the command has been sucessuflly ran
+     * defaults to sending it as a normal message, but can send it as reply if replyTo is set to true
+     */
     respond() {
-        return this.message.reply(this.reply);
+        if(this.replyTo === true) {
+            return this.message.reply(this.reply);
+        } else {
+            return this.message.channel.send(this.reply);
+        }
     }
 
 }
