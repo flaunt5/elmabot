@@ -1,6 +1,18 @@
 class Alias extends Ecommand {
     constructor(message) {
         super(message);
+        this._commandname = "alias";
+        this._desc = "Assigns or removes an alias for a discord user";
+        this._syntax = config.global.prefix + this.commandname + " <@discord user> is/isn't <new alias>";
+    }
+
+    run() {
+        if(this.params !== undefined && this.params.length > 2) {
+            return this.userAlias(this.message);
+        } else {
+            this.reply("can't assign an alias, command is missing parameters");
+            return false
+        }
     }
 
     /**
@@ -9,10 +21,15 @@ class Alias extends Ecommand {
      * @param {Collection} message - a discordjs message object
      * @returns {string} - just returns the string to serve as answer for now, because I'm lazy and sloppy
      */
-
     userAlias(message) {
-        let regex = new RegExp("^e&(\\w+) (\\S*) (is not|isn't|is) (\\w*)", "im"),
-            theMatch = message.content.match(regex);
+        let params = this.params;
+        let regex = new RegExp("^(\\w+) (is|is not|isn't) (\\w+)", "mi"),
+            theMatch = message.content.match(prefix),
+            theRest = theMatch[2].match(regex);
+        console.dir(params);
+        console.dir(theMatch);
+        console.dir(theRest);
+        return false;
         if (theMatch !== null) {
             if (theMatch.length > 3) {
                 let users = message.mentions.users.array(),
