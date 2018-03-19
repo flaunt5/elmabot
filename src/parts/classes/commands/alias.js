@@ -30,31 +30,65 @@ class Alias extends Ecommand {
         console.dir(theMatch);
         console.dir(theRest);
         return false;
-        if (theMatch !== null) {
-            if (theMatch.length > 3) {
-                let users = message.mentions.users.array(),
-                    targetUser = '';
-                for(let i = 0; i < users.length; i++) {
-                    let theRegexp = new RegExp("<@" + users[i].id + ">");
-                    if(theMatch[2].match(theRegexp)) {
-                        targetUser = users[i];
-                        break;
-                    }
+        if (theRest.length > 3) {
+            let users = message.mentions.users.array(),
+                targetUser = '';
+            for(let i = 0; i < users.length; i++) {
+                let theRegexp = new RegExp("<@" + users[i].id + ">");
+                if(theRest[0].match(theRegexp)) {
+                    targetUser = users[i];
+                    break;
                 }
-                console.dir(targetUser);
+            }
+            console.dir(targetUser);
+            let rep = '',
+                err = '';
+            if(theRest[1] === "is") {
                 console.log("attempting databaseInsert");
                 let insertStatement = db.prepare("INSERT INTO userAlias (userId, userName, userDiscrim, userAlias) VALUES (?, ?, ?, ?);");
-                insertStatement.run([targetUser.id, targetUser.username, targetUser.discriminator, theMatch[4]], function (re) {
-                    console.dir(re);
-                    console.dir(this);
+                insertStatement.run([targetUser.id, targetUser.username, targetUser.discriminator, theRest[3]], function (re) {
+                    err = "error in database exection during insert :" + re;
                 });
-                insertStatement.finalize();
-                this.reply = theMatch[2];
+                if(err !== '') {
+                    this.reply = "I'm sorry, but it seems like an error has occured";
+                    return false;
+                } else {
+                    insertStatement.finalize();
+                    this.reply = "Understood, <@" + targetUser.id + "> is now " + theRest[3];
+                    return true;
+                }
             } else {
-                this.reply = "I'm sorry, but it seems like you didn't finish your alias command 😦";
+                console.log("attempting database removal");
+                db.get("SELECT id FROM userAlias WHERE userId = ? AND userAlias = ?", [targetUser.id, theRest[3]], function(error, row) {
+                    if(error !== undefined) {
+                        err = "error in database exection during lookup :" + error;
+                        rep = "I'm sorry, but it seems like an error has occured";
+                    }
+                    if(row === undefined) {
+                       rep = "Alias was not found";
+                       return true;
+                    } else {
+                        db.run("DELETE FROM userAlias WHERE id = ?", row,id, function(error) {
+                            if(error !== null) {
+                                err = "error in database execution during deletion :" + error;
+                                rep = "I'm sorry, but it seems like an error has occured";
+                            } else {
+                                rep = "Undertood, <@" + targetUser.id + "> is no longer " + theRest[3];
+                            }
+                        });
+                    }
+                });
+                this.reply = rep;
+                if(err !== '') {
+                    this.error = err;
+                    return false;
+                } else {
+                    return true;
+                }
             }
         } else {
-            this.reply = "I'm sorry, it seems like I couldn't understand the alias command 😦";
+            this.reply = "I'm sorry but it seems like you haven't finished the alias command, please try again";
+            return true;
         }
     }
 }

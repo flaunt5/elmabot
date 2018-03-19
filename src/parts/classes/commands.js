@@ -57,7 +57,6 @@ class Commands {
         command = command.toLowerCase();
         if(list[command] !== undefined) {
             let comm = new list[command](message);
-
             if(comm.run()) {
                 comm.respond()
             } else {
