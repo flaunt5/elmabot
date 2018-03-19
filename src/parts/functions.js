@@ -20,3 +20,17 @@ function getCurrentDatetime() {
 
     return todayYear + "-" + todayMonth + "-" + todayDay + " " + todayHour + ":" + todayMinutes + ":" + todaySeconds;
 }
+
+/**
+ * checks whether or not a discord user has a nickname or not
+ * if not, returns the user's discord username
+ * @param member - a discordjs member object
+ * @returns {string} - either the nickname or username
+ */
+function theNick(member) {
+    if(member.nickname === null) {
+        return member.user.username;
+    } else {
+        return member.nickname;
+    }
+}
