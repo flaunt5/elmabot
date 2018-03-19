@@ -4,21 +4,33 @@ const yaml    = require('js-yaml'),
       sqlite  = require('sqlite3'),
       Discord = require('discord.js'),
       Twitter = require('twitter'),
-      winston = require('winston');
+    { createLogger, format, transports } = require('winston'),
+    { combine, timestamp, label, printf } = format;
 
 //gets values from config file
 const config = getConfig();
 
-const logger = winston.createLogger({
+const myFormat = printf(info => {
+    return `${info.timestamp} ${info.level}: ${info.message}`;
+});
+
+const logger = createLogger({
+    format: combine(
+        timestamp(),
+        myFormat
+    ),
     transports: [
-        new winston.transports.File({ filename: 'config/error.log', level: 'error' }),
-        new winston.transports.File({ filename: 'config/combined.log' })
+        new transports.File({ filename: 'config/error.log', level: 'error' }),
+        new transports.File({ filename: 'config/combined.log' })
     ]
 });
 
 if (process.env.NODE_ENV !== 'production') {
-    logger.add(new winston.transports.Console({
-        format: winston.format.simple()
+    logger.add(new transports.Console({
+        format: combine(
+            timestamp(),
+            myFormat
+        ),
     }));
 }
 
@@ -36,7 +48,7 @@ function getConfig() {
 /**other constants**/
 const userReplace = "@" + config.global.replace,
       roleReplace = userReplace + "s",
-      prefix = new RegExp("^" + config.global.prefix + "(\\w+)", "mi");
+      prefix = new RegExp("^" + config.global.prefix + "(\\w+) ?(.*)?", "mi");
 
 //set up database, needs actual database to exist or else bot gets unhappy
 const db = new sqlite.Database("./config/db.sqlite");
