@@ -52,15 +52,20 @@ class Commands {
         this.formatlist.push(name);
     }
 
-    run(command, message) {
+    async run(command, message) {
         let list = this.list;
         command = command.toLowerCase();
         if(list[command] !== undefined) {
-            let comm = new list[command](message);
-            if(comm.run()) {
-                comm.respond()
-            } else {
-                this.handleError("command found but error in execution", comm)
+            try {
+                let comm = new list[command](message),
+                    result = await comm.run();
+                if(result) {
+                    comm.respond();
+                } else {
+                    this.handleError("command found but error in execution", comm)
+                }
+            } catch (e) {
+                logger.warn("error while trying to execute command", e)
             }
         } else {
             message.reply("command not recognized");

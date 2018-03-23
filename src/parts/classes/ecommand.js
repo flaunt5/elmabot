@@ -81,16 +81,18 @@ class Ecommand {
      * a base run function to be expanded upon per command,
      * this will be called by the main command object to run individual commands
      * Each command should perform it's main functions within this umbrella function
-     * @returns {boolean}
+     * @returns {Promise}
      */
     run() {
-        this.reply = "hello";
-        return true;
+        return new Promise(resolve => {
+            this.reply = "hello";
+            resolve(true);
+        });
     }
 
     /**
      * A base function that returns whatever reply has been set by other base functions,
-     * the command object returns this response after the command has been sucessuflly ran
+     * the command object returns this response after the command has been successfully ran
      * defaults to sending it as a normal message, but can send it as reply if replyTo is set to true
      */
     respond() {
