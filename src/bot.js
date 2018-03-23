@@ -6,9 +6,7 @@ discordClient.on("message", (message, user) => {
     //No talkie to other bots
     if(message.author.bot) return;
 
-    let content = message.content,
-        commandMatch = content.match(prefix),
-        channel = message.channel;
+    let commandMatch = message.content.match(prefix);
 
     if (commandMatch !== null && commandMatch.length > 1) {
         commands.run(commandMatch[1], message);

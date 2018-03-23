@@ -96,17 +96,6 @@ class Tweet {
             .then()
     }
 
-    registerTweet(body, userId, replyTo = 0) {
-        let sql = db.prepare("INSERT INTO twitter (tweetDate, tweetContent, userId");
-    }
-
-    registerTweetVotes(tweetId, users) {
-        let sql = db.prepare("INSERT INTO tweetVote (userId, tweetId) VALUES(?, ?);");
-        for(let i = 0;i < users.length; i++ ) {
-            sql.run(users[i].id, tweetId)
-        }
-    }
-
     multiPostTweet(bodies, users, index = 0, lastTweetId = 0) {
         let leng = bodies.length;
         if(index <= leng) {

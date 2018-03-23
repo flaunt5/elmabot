@@ -15,85 +15,59 @@ class Alias extends Ecommand {
         }
     }
 
-    /**
-     * re-analyzes the message and creates/stores an alias for a user
-     * Also checks if an alias exists and associates it with the user
-     * @param {Collection} message - a discordjs message object
-     * @returns {string} - just returns the string to serve as answer for now, because I'm lazy and sloppy
-     */
     userAlias(message) {
-        let params = this.params;
-        let regex = new RegExp("^(\\S+) (is|is not|isn't) (\\w+)", "mi"),
-            theMatch = message.content.match(prefix),
-            theRest = theMatch[2].match(regex);
-        console.dir(params);
-        console.dir(theMatch);
-        console.dir(theRest);
-        if (theRest.length > 3) {
+        let theMatch = message.content.match(new RegExp("^" + config.global.prefix + "\\w+ (\\S+) (is|is not|isn't) (\\w+)", "mi"));
+        if (theMatch.length > 4) {
             let users = message.mentions.users.array(),
                 targetUser = '';
             for(let i = 0; i < users.length; i++) {
                 let theRegexp = new RegExp("<@" + users[i].id + ">");
-                if(theRest[0].match(theRegexp)) {
+                if(match[1].match(theRegexp)) {
                     targetUser = users[i];
                     break;
                 }
             }
-            let rep = '',
-                err = '';
-            console.dir(theRest[2]);
-            if(theRest[2] === "is" && theRest[3] !== "not") {
+            if(theMatch[2] === "is" && theMatch[3] !== "not") {
                 console.log("attempting databaseInsert");
                 let insertStatement = db.prepare("INSERT INTO userAlias (userId, userName, userDiscrim, userAlias) VALUES (?, ?, ?, ?);");
-                insertStatement.run([targetUser.id, targetUser.username, targetUser.discriminator, theRest[3]], function (re) {
-                    err = "error in database exection during insert :" + re;
-                });
-
-                let insertPromise = new Promise( function(resolve, reject) {
-                    if(err !== '') {
+                insertStatement.run([targetUser.id, targetUser.username, targetUser.discriminator, theMatch[3]], (re) => {
+                    if(re !== '') {
+                        this.error = "error in database exection during insert :" + re;
                         this.reply = "I'm sorry, but it seems like an error has occured";
-                        reject(false);
+                        return false;
                     } else {
                         this.reply = "Understood, <@" + targetUser.id + "> is now " + theRest[3];
-                        resolve(true);
+                        return true;
                     }
                 });
-
-
-
-            } else if(theRest[2] === "isn't" || (theRest[2] === "is" && theRest[3] === "not")) {
-                db.get("SELECT * FROM userAlias WHERE `userId` = ? AND `userAlias` = ?", [targetUser.id, theRest[3]], function(error, row) {
+            } else if(theMatch[2] === "isn't" || (theMatch[2] === "is" && theMatch[3] === "not")) {
+                db.get("SELECT * FROM userAlias WHERE `userId` = ? AND `userAlias` = ?", [targetUser.id, theMatch[3]], (err, row) => {
                     if(error !== undefined) {
-                        err = "error in database exection during lookup :" + error;
-                        rep = "I'm sorry, but it seems like an error has occured";
-                    }
-                    if(row === undefined) {
+                        this.error = "error in database exection during lookup :" + err;
+                        this.reply = "I'm sorry, but it seems like an error has occured";
+                        return false;
+                    } else if(row === undefined) {
                         console.log("row not found");
-                       rep = "Alias was not found";
-                       return true;
+                        this.reply = "Alias was not found";
+                        return true;
                     } else {
                         console.log("row :");
                         console.dir(row);
-                        db.run("DELETE FROM userAlias WHERE id = ?", row.id, function(error) {
+                        db.run("DELETE FROM userAlias WHERE id = ?", row.id, (err) => {
                             if(error !== null) {
                                 console.log("error :");
-                                console.log(error);
-                                err = "error in database execution during deletion :" + error;
-                                rep = "I'm sorry, but it seems like an error has occured";
+                                console.log(err);
+                                this.error = "error in database execution during deletion :" + err;
+                                this.reply = "I'm sorry, but it seems like an error has occured";
+                                return false;
                             } else {
                                 console.log("worked");
-                                rep = "Understood, <@" + targetUser.id + "> is no longer " + theRest[3];
+                                this.reply = "Understood, <@" + targetUser.id + "> is no longer " + theMatch[3];
+                                return true;
                             }
                         });
                     }
                 });
-                this.reply = rep;
-                if(err !== '') {
-                    this.error = err;
-                    return false;
-                } else {
-                    return true;
-                }
             } else {
                 this.reply = "Error in the alias command, are you sure you wrote it correctly?"
             }
