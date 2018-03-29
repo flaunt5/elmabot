@@ -92,7 +92,7 @@ class Alias extends Ecommand {
         let users = this.message.mentions.users.array(),
             targetUser = '';
         for(let i = 0; i < users.length; i++) {
-            let theRegexp = new RegExp("<@" + users[i].id + ">");
+            let theRegexp = new RegExp("<@!?" + users[i].id + ">");
             if(theMatch[1].match(theRegexp)) {
                 targetUser = users[i];
                 break;
@@ -100,6 +100,9 @@ class Alias extends Ecommand {
         }
         if(targetUser === '') {
             this.reply = "Sorry, it seems like you didn't specify a user";
+            return true;
+        } else if(targetUser.bot) {
+            this.reply = "Unfortunately I can't assign an alias to a bot";
             return true;
         }
         try {
