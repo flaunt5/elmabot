@@ -8,21 +8,24 @@ class Alias extends Ecommand {
 
    run() {
         return new Promise((resolve, reject) => {
-            let theMatch = this.message.content.match(new RegExp("^" + config.global.prefix + "\\w+ (\\S+) (is|is not|isn't) (\\w+)", "mi"));
-            if(this.theMatch.length > 3) {
-                resolve(this.userAlias());
+            let theMatch = this.message.content.match(new RegExp("^" + config.global.prefix + "\\w+ (\\S+) (is|isn'?t) (\\w+) ?(\\w+)?", "mi"));
+            console.log(theMatch);
+            if(theMatch !== null && theMatch.length > 3) {
+                resolve(this.userAlias(theMatch));
             } else {
-                this.reply("can't assign an alias, command is missing parameters");
-                reject(false);
+                this.reply = "can't assign an alias, command is missing parameters";
+                resolve(true);
             }
         });
     }
 
-    getUserAlias(targetUser, theMatch) {
+    getUserAlias(targetUser, alias) {
         return new Promise((resolve, reject) => {
-            db.get("SELECT * FROM userAlias WHERE `userId` = ? AND `userAlias` = ?", [targetUser.id, theMatch[3]], (err, row) => {
+            db.get("SELECT * FROM userAlias WHERE `userId` = ? AND `userAlias` = ?", [targetUser.id, alias], (err, row) => {
                 if(err !== null) {
                     reject(err);
+                } else if(row === undefined) {
+                    resolve(false);
                 } else {
                     resolve(row);
                 }
@@ -30,17 +33,58 @@ class Alias extends Ecommand {
         });
     }
 
-    insertAlias(targetUser, theMatch) {
+    insertAlias(targetUser, alias) {
         return new Promise((resolve, reject) => {
-            let insertStatement = db.prepare("INSERT INTO userAlias (userId, userName, userDiscrim, userAlias) VALUES (?, ?, ?, ?);");
-            insertStatement.run([targetUser.id, targetUser.username, targetUser.discriminator, theMatch[3]], (re) => {
-                if(re !== '') {
-                    this.error = "error in database exection during insert :" + re;
-                    this.reply = "I'm sorry, but it seems like an error has occured";
-                } else {
-                    this.reply = "Understood, <@" + targetUser.id + "> is now " + theMatch[3];
-                }
-            });
+            this.getUserAlias(targetUser, alias)
+                .then((result) => {
+                    if(result === false) {
+                        let insertStatement = db.prepare("INSERT INTO userAlias (userId, userName, userDiscrim, userAlias) VALUES (?, ?, ?, ?);");
+                        insertStatement.run([targetUser.id, targetUser.username, targetUser.discriminator, alias], (re) => {
+                            if(re === null || re === 'null') {
+                                this.reply = "Understood, <@" + targetUser.id + "> is now " + alias;
+                                resolve(true);
+                            } else {
+                                this.error = "error in database execution during insert :" + re;
+                                this.reply = "I'm sorry, but it seems like an error has occurred";
+                                reject(false);
+                            }
+                        });
+                    } else {
+                        this.reply = "that user alias already exists";
+                        resolve(true)
+                    }
+                })
+                .catch((err) => {
+                    this.error = "error in insertAlias during user lookup -- " + err;
+                    reject(false);
+                });
+        });
+    }
+
+    deleteAlias(targetUser, alias) {
+        console.log(alias);
+        return new Promise((resolve, reject) => {
+            this.getUserAlias(targetUser, alias)
+                .then((result) => {
+                    if(result === false) {
+                        this.reply = "I couldn't find that user and alias combination";
+                        resolve(true);
+                    } else {
+                        db.run("DELETE FROM userAlias WHERE id = ?", result.id, (err) => {
+                            if(err !== null) {
+                                this.error = "error in database execution during deletion :" + err;
+                                reject(false);
+                            } else {
+                                this.reply = "Understood, <@" + result.userId + "> is no longer " + alias;
+                                resolve(true);
+                            }
+                        });
+                    }
+                })
+                .catch((err) => {
+                    this.error = err;
+                    reject(false);
+                });
         });
     }
 
@@ -54,52 +98,28 @@ class Alias extends Ecommand {
                 break;
             }
         }
-        this.getUserAlias(targetUser, theMatch)
-            .then((result) => {
-                if(theMatch[2] === "is" && theMatch[3] !== "not") {
-                    if(result === '') {
-
-                    } else {
-                        this.reply = "that user alias already exists";
-                        return true;
-                    }
-
-                }
-            })
-            .catch((err) => {
-                    this.error = err;
-                    this.reply = "sorry it seems like an error has occured";
-                    return false;
-            });
-        if(theMatch[2] === "is" && theMatch[3] !== "not") {
-            if(userInDb === '') {
-
+        if(targetUser === '') {
+            this.reply = "Sorry, it seems like you didn't specify a user";
+            return true;
+        }
+        try {
+            if(theMatch[2] === "is" && theMatch[3] !== "not") {
+                return await this.insertAlias(targetUser, theMatch[3]);
+            } else if(theMatch[2] === "isn't" || theMatch[2] === "isnt") {
+               return await this.deleteAlias(targetUser, theMatch[3]);
+            } else if(theMatch[2] === "is" && theMatch[3] === "not") {
+                console.log(theMatch);
+                console.log(theMatch[4]);
+                return await this.deleteAlias(targetUser, theMatch[4])
             } else {
-                this.reply = "that user alias already exists";
+                this.reply = "Error in the alias command, are you sure you wrote it correctly?";
                 return true;
             }
-
-        } else if(theMatch[2] === "isn't" || (theMatch[2] === "is" && theMatch[3] === "not")) {
-            if(userInDb !== '') {
-                db.run("DELETE FROM userAlias WHERE id = ?", userInDb, (err) => {
-                    if(err !== null) {
-                        console.log("error :");
-                        console.log(err);
-                        this.error = "error in database execution during deletion :" + err;
-                        this.reply = "I'm sorry, but it seems like an error has occured";
-                        return false;
-                    } else {
-                        console.log("worked");
-                        this.reply = "Understood, <@" + targetUser.id + "> is no longer " + theMatch[3];
-                        return true;
-                    }
-                });
-            } else {
-                this.reply = "userAlias was not found in database"
-            }
-        } else {
-            this.reply = "Error in the alias command, are you sure you wrote it correctly?"
+        } catch (e) {
+            logger.error(e);
+            return false;
         }
+
     }
 }
 
