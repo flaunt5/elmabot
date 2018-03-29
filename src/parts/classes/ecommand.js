@@ -2,7 +2,7 @@ class Ecommand {
     constructor(message) {
         this._commandname = "command";
         this._desc ="This command doesn't have a description yet";
-        this._syntax= prefix + this.commandnamename;
+        this._syntax= config.global.prefix + this.commandname;
         this._message = message;
         this._params = this.getParams();
         this._reply = '';
