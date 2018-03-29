@@ -7,16 +7,18 @@ class Help extends Ecommand {
     }
 
     run() {
-        if (this.params.length >= 1) {
-            this.reply = this.echoCommand(this.params[0]);
-            return true;
-        } else if(this.params === false || this.params.length < 1) {
-            this.reply = this.echoList();
-            return true;
-        } else {
-            this.error = "params incorrectly given or NaN";
-            return false
-        }
+        return new Promise(((resolve, reject) => {
+            if (this.params.length >= 1) {
+                this.reply = this.echoCommand(this.params[0]);
+                resolve(true);
+            } else if(this.params === false || this.params.length < 1) {
+                this.reply = this.echoList();
+                resolve(true);
+            } else {
+                this.error = "params incorrectly given or NaN";
+                reject(false);
+            }
+        }));
     }
 
     /**
@@ -47,7 +49,6 @@ class Help extends Ecommand {
      */
     echoCommand(command) {
         let reply = '';
-        console.log(command);
         if(commands.list[command] !== undefined) {
             let comm = new commands.list[command](this.message);
             reply = { embed: {
@@ -59,7 +60,7 @@ class Help extends Ecommand {
                         value: comm.syntax
                     }],
                     footer: {
-                        icon_url: this.user.avatarURL,
+                        icon_url: this.message.member.user.avatarURL,
                         text: "Requested by " + theNick(this.member)
                     }
                 }
