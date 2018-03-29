@@ -62,10 +62,14 @@ class Commands {
                 if(result) {
                     comm.respond();
                 } else {
+                    message.channel.send("I'm Sorry, but it seems like an error has occured");
                     this.handleError("command found but error in execution", comm)
                 }
             } catch (e) {
-                logger.warn("error while trying to execute command", e)
+                console.log(e);
+                message.channel.send("I'm Sorry, but it seems like an error has occured");
+                this.handleError("error while trying to execute command");
+                logger.warn(e)
             }
         } else {
             message.reply("command not recognized");
