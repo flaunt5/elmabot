@@ -1,43 +1,92 @@
 class Tweet {
-    constructor(body, message, user) {
-        this._body = body;
+    constructor(message) {
         this._message = message;
-        this._user = user;
+        this._content = message.content;
+        this._users = message.mentions.users.array();
+        this._roles = message.mentions.roles.array();
+        this._user = message.author;
         this._twitterUser = config.twitter.accountname;
-        this._userVotes = [];
-        this._posted = [];
-    }
-
-    get body() {
-        return this._body;
-    }
-
-    set body(value) {
-        this._body = value;
     }
 
     get message() {
         return this._message;
     }
 
-    set message(value) {
-        this._message = value;
+    get content() {
+        return this._content;
+    }
+
+    set content(value) {
+        this._content = value;
     }
 
     get user() {
         return this._user;
     }
 
-    set user(value) {
-        this._user = value;
+    get users() {
+        return this._users;
     }
 
-    get posted() {
-        return this._posted;
+    get roles() {
+        return this._roles;
     }
 
-    set posted(value) {
-        this._posted = value;
+    get twitterUser() {
+        return this._twitterUser;
+    }
+
+    prepare() {
+        return new Promise(resolve => {
+            let reply = this.parseMessage();
+        });
+
+    }
+
+    async parseMessage() {
+        let content = await this.findUserAlias(this.content);
+        if (this.users.length > 0) {
+            content = this.replaceMentions(this.users, this.content, "users");
+        }
+        if (this.roles.length > 0) {
+            content = this.replaceMentions(this.roles, this.content, "roles");
+        }
+
+        return content;
+    }
+
+    findUserAlias(content) {
+        return new Promise(resolve => {
+            db.each("SELECT userAlias AS alias FROM userAlias", (err, row) => {
+                let match = content.match(row.alias);
+                if (match) {
+                    console.log(match[0]);
+                    content.replace(match[0], userReplace)
+                }
+            });
+            resolve(content)
+        });
+    }
+
+    replaceMentions(toReplace, content, type = "users") {
+        let result,
+            prefix,
+            replace;
+        if (type === "users") {
+            prefix = "<@";
+            replace = userReplace;
+        } else if (type === "roles") {
+            prefix = "<@&";
+            replace = roleReplace;
+        } else {
+            return content;
+        }
+        for (let i = 0, len = users.length; i < len; i++) {
+            let regex = new RegExp(prefix + users[i].id + ">", "g");
+
+            result = content.replace(regex, replace);
+        }
+        return result;
     }
 
     tweetIt(multi = false) {
@@ -45,7 +94,7 @@ class Tweet {
     }
 
     tweetSplitter(body) {
-        let twitterPhrase = "@" + twitterUser + " ... (10/10) ",
+        let twitterPhrase = "@" + this.twitterUser + " ... (10/10) ",
             length = 240 - twitterPhrase.length;
         if(body.length > length) {
             let pos = length,
@@ -80,7 +129,7 @@ class Tweet {
                     toAdd = toAdd + "(" + (i + 1) + "/" + len + ")";
                 }
                 if(i > 0) {
-                    result[i] = "@" + twitterUser + " " + result[i] + toAdd;
+                    result[i] = "@" + this.twitterUser + " " + result[i] + toAdd;
                 } else {
                     result[i] = result[i] + toAdd;
                 }
@@ -111,7 +160,7 @@ class Tweet {
                         index++;
                         console.log(tweet);
                         setTimeout(function () {
-                            multiPostTweet(bodies, users, index, tweet.id_str)
+                            this.multiPostTweet(bodies, users, index, tweet.id_str)
                         }, 3000);
                     })
                     .catch(function (error) {
