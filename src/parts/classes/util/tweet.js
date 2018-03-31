@@ -20,10 +20,6 @@ class Tweet {
         this._content = value;
     }
 
-    get user() {
-        return this._user;
-    }
-
     get users() {
         return this._users;
     }
@@ -37,22 +33,31 @@ class Tweet {
     }
 
     prepare() {
-        return new Promise(resolve => {
-            let reply = this.parseMessage();
+        return new Promise((resolve, reject) => {
+            let reply = this.parseMessage(this.content);
+            if (reply !== false && reply.length > 235) {
+                reply = this.tweetSplitter(reply)
+            }
         });
 
     }
 
-    async parseMessage() {
-        let content = await this.findUserAlias(this.content);
+    async parseMessage(inp) {
+        let content = await this.findUserAlias(inp);
         if (this.users.length > 0) {
-            content = this.replaceMentions(this.users, this.content, "users");
+            content = this.replaceMentions(this.users, content, "users");
         }
         if (this.roles.length > 0) {
-            content = this.replaceMentions(this.roles, this.content, "roles");
+            content = this.replaceMentions(this.roles, content, "roles");
         }
 
-        return content;
+        if (typeof content === "string") {
+            return content;
+        } else {
+            logger.error("tweet parsers returns non-string answer");
+            logger.error(content);
+            return false;
+        }
     }
 
     findUserAlias(content) {
@@ -73,7 +78,7 @@ class Tweet {
             prefix,
             replace;
         if (type === "users") {
-            prefix = "<@";
+            prefix = "<@!?";
             replace = userReplace;
         } else if (type === "roles") {
             prefix = "<@&";
@@ -87,10 +92,6 @@ class Tweet {
             result = content.replace(regex, replace);
         }
         return result;
-    }
-
-    tweetIt(multi = false) {
-
     }
 
     tweetSplitter(body) {
