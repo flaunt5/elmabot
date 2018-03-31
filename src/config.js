@@ -5,7 +5,9 @@ const yaml    = require('js-yaml'),
       Discord = require('discord.js'),
       Twitter = require('twitter'),
     { createLogger, format, transports } = require('winston'),
-    { combine, timestamp, label, printf } = format;
+    {combine, timestamp, label, printf} = format,
+    request = require('request'),
+    rp = require('request-promise-native');
 
 //gets values from config file
 const config = getConfig();

@@ -21,6 +21,8 @@
     "discord.js": "^11.3.2",
     "fs": "0.0.1-security",
     "js-yaml": "^3.11.0",
+    "request": "^2.85.0",
+    "request-promise-native": "^1.0.5",
     "sqlite3": "^3.1.13",
     "twitter": "^1.7.1",
     "winston": "^3.0.0-rc3"

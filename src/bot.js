@@ -6,11 +6,6 @@ discordClient.on("message", (message, user) => {
     //No talkie to other bots
     if(message.author.bot) return;
 
-    message.on("react", (x, y) => {
-        console.log(x);
-        console.log(y);
-    });
-
     let commandMatch = message.content.match(prefix);
 
     if (commandMatch !== null && commandMatch.length > 1) {
