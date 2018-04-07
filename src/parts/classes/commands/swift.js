@@ -9,7 +9,7 @@ class Swift extends Ecommand {
     run() {
         return new Promise((resolve, reject) => {
             let options = {
-                uri: 'https://api.reddit.com/r/TaylorSwiftPictures/random',
+                uri: 'https://api.reddit.com/r/TaylorSwiftPictures/random.json?obey_over18=true',
                 headers: {
                     'User-Agent': 'nodejs:elmabot:0.3.1 (by flaunt5)'
                 },
