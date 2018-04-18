@@ -12,10 +12,12 @@ class How extends Ecommand {
                 theMatch = this.message.content.match(regex);
 
             if(theMatch === null) {
-                this.error = "how command regex did not find any matches";
-                reject(false);
+                this.reply = "There seems to be a problem, are you sure you wrote the command correctly?";
+                resolve(true);
             }
+
         });
 
     }
+
 }
