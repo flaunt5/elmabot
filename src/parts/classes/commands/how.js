@@ -8,16 +8,26 @@ class How extends Ecommand {
 
     run() {
         return new Promise((resolve, reject) => {
-            let regex = new RegExp("^" + config.global.prefix + this.commandname + " (.+)+ is (.*)+(\\?)?", "mi"),
-                theMatch = this.message.content.match(regex);
+            try {
+                let regex = new RegExp("^" + config.global.prefix + this.commandname + " (.+) is (.+[^\\?])\\??", "mi"),
+                    theMatch = this.message.content.match(regex);
 
-            if(theMatch === null) {
-                this.reply = "There seems to be a problem, are you sure you wrote the command correctly?";
-                resolve(true);
+                if(theMatch === null) {
+                    this.reply = "There seems to be a problem, are you sure you wrote the command correctly?";
+                    resolve(true);
+                } else {
+                    console.log(theMatch);
+                    let number = Math.random() * Math.floor(100),
+                        num = number.toFixed(2);
+                    this.reply = theMatch[1] + " is " + num + "% " + theMatch[2];
+                    resolve(true)
+                }
+            } catch (e) {
+                this.error = e;
+                reject(e);
             }
-
         });
-
     }
-
 }
+
+commands.register(How, ["how", "compare"]);
