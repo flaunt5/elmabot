@@ -33,22 +33,21 @@ class Reddit extends Ecommand {
                 resolve(true);
                 return true;
             }
-            let options = {
-                uri: 'https://api.reddit.com/r/' + sub + '/random.json?obey_over18=true',
+            let uri = 'https://api.reddit.com/r/' + sub + '/random.json' + (this.message.channel.nsfw ? '' : '?obey_over18=true'),
+                options = {
+                uri: uri,
                 headers: {
                     'User-Agent': 'nodejs:elmabot:0.3.1 (by flaunt5)'
                 },
                 json: true
             };
+            console.log(uri);
             rp(options)
                 .then(response => {
-                    // console.log(response);
+                    console.log(response);
                     if(Array.isArray(response)) {
                         response = response[0];
                     }
-                    console.log("response");
-                    console.log(response);
-                    console.log("=======");
                     if(response.StatusCodeError) {
                         this.reply("It seems like Reddit has experienced an error");
                         resolve(true);
