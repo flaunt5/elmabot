@@ -41,10 +41,8 @@ class Reddit extends Ecommand {
                 },
                 json: true
             };
-            console.log(uri);
             rp(options)
                 .then(response => {
-                    console.log(response);
                     if(Array.isArray(response)) {
                         response = response[0];
                     }
