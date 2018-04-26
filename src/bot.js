@@ -1,5 +1,16 @@
+//Where the discord.js magic really starts
+console.log(getCurrentDatetime() + " bot started");
+
+discordClient.login(config.discord.token)
+    .then(() => {
+        console.log(getCurrentDatetime() + " Login successful")
+    })
+    .catch((error) => {
+        logger.error("Error while attempting login to Discord : " + error);
+    });
+
 discordClient.on('ready', () => {
-    console.log("bot is up and running");
+    console.log(getCurrentDatetime() + " bot is up and running");
 });
 
 discordClient.on("message", (message, user) => {
@@ -13,9 +24,10 @@ discordClient.on("message", (message, user) => {
     }
 });
 
-discordClient.on('messageReactionAdd', (messReac) => {
+discordClient.on('messageReactionAdd', (messReac, requester) => {
     if (messReac.emoji.name === 'tweet') {
-        let theMessage = new Tweet(messReac.message);
+        let theMessage = new Tweet(messReac.message, requester);
+        theMessage.execute();
     }
 });
 
