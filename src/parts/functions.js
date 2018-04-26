@@ -11,6 +11,15 @@ function getCurrentDatetime() {
         todayMinutes = today.getMinutes(),
         todaySeconds = today.getSeconds();
 
+    if(todayHour < 10) {
+        todayHour = "0" + todayHour;
+    }
+    if(todayMinutes < 10) {
+        todayMinutes = "0" + todayMinutes;
+    }
+    if(todaySeconds < 10) {
+        todaySeconds = "0" + todaySeconds;
+    }
     if(todayMonth < 10) {
         todayMonth = "0" + todayMonth;
     }
