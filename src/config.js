@@ -33,7 +33,7 @@ const yaml    = require('js-yaml'),
     }),
 
 //several necessary global constants, prefix should not be changed under any circumstance
-    userReplace = "@" + config.global.replace,
+    userReplace = "*" + config.global.replace,
     roleReplace = userReplace + "s",
     prefix = new RegExp("^" + config.global.prefix + "(\\w+) ?(.*)?", "mi"),
 
@@ -50,9 +50,6 @@ const yaml    = require('js-yaml'),
         access_token_key: config.twitter.accesstoken.key,
         access_token_secret: config.twitter.accesstoken.secret
     });
-
-//Where the discord.js magic really starts
-discordClient.login(config.discord.token);
 
 /** Slight changes to how some shit works depending on whether or not you're in developer mode
  * make sure you don't fuck up your environment variables, kids
