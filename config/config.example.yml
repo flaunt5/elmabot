@@ -1,5 +1,12 @@
 global:
   url:
+  prefix: "e!"
+  replace: "nerd"
+database:
+  host:
+  user:
+  password:
+  database:
 twitter:
   accountname:
   consumer:
@@ -10,3 +17,4 @@ twitter:
     secret:
 discord:
   token:
+  ownerid:
