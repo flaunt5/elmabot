@@ -67,10 +67,9 @@ class Commands {
                     this.handleError("command found but error in execution", comm);
                 }
             } catch (e) {
-                console.log(e);
+                logger.error(e);
                 message.channel.send("I'm Sorry, but it seems like an error has occurred");
                 message.channel.stopTyping(true);
-                this.handleError("error while trying to execute command");
             }
         } else {
             message.reply("command not recognized");
