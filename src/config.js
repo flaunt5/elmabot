@@ -67,6 +67,16 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 /**
+ * parses JSON and handles errors
+ * @param str - JSON to be parsed
+ * @returns {Object|Array|boolean}
+ */
+function parse(str){
+    try { return JSON.parse(str); }
+    catch(e) { logger.warn("Error parsing JSON : " + JSON.stringify(e)); return false; }
+}
+
+/**
  * simple function to get and parse the YAML config file
  * @returns {array}
  */
@@ -74,7 +84,7 @@ function getConfig() {
     try {
         let conf = yaml.safeLoad(fs.readFileSync("./config/config.yml", 'utf8')),
             jsonConf = JSON.stringify(conf, null, 4);
-        return JSON.parse(jsonConf);
+        return parse(jsonConf);
     } catch (e) {
         logger.error(e);
         process.exit(1);
