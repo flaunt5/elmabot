@@ -1,17 +1,21 @@
-//Where the discord.js magic really starts
-console.log(getCurrentDatetime() + " bot started");
 
+logger.info("bot started");
+//Where the discord.js magic really starts
 discordClient.login(config.discord.token)
     .then(() => {
         console.log(getCurrentDatetime() + " Login successful")
+        logger.info("Login successful");
     })
     .catch((error) => {
         logger.error("Error while attempting login to Discord : " + error);
     });
 
 discordClient.on('ready', () => {
-    console.log(getCurrentDatetime() + " bot is up and running");
+    logger.info("bot is ready");
 });
+
+discordClient.on("warn", (info) => logger.warn(info));
+discordClient.on("error", (error) => logger.error(error));
 
 discordClient.on("message", (message, user) => {
     //No talkie to other bots
