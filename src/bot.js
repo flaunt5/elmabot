@@ -1,9 +1,11 @@
 
 logger.info("bot started");
+
+let settings = {};
+
 //Where the discord.js magic really starts
 discordClient.login(config.discord.token)
     .then(() => {
-        console.log(getCurrentDatetime() + " Login successful")
         logger.info("Login successful");
     })
     .catch((error) => {
@@ -12,6 +14,7 @@ discordClient.login(config.discord.token)
 
 discordClient.on('ready', () => {
     logger.info("bot is ready");
+    settings = new Settings(discordClient, config.discord.ownerid);
 });
 
 discordClient.on("warn", (info) => logger.warn(info));
@@ -21,9 +24,12 @@ discordClient.on("message", (message, user) => {
     //No talkie to other bots
     if(message.author.bot) return;
 
-    let commandMatch = message.content.match(prefix);
+    console.dir(settings);
 
-    if (commandMatch !== null && commandMatch.length > 1) {
+    let commandMatch = message.content.match(prefix),
+        serverId = message.guild.id;
+
+    if (commandMatch !== null && commandMatch.length > 1 && settings.ready === true) {
         commands.run(commandMatch[1], message);
     }
 });
