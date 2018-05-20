@@ -38,11 +38,24 @@ class Tweet {
     }
 
     /**
+     * gets the id of the channel where the tweet is to be checked
+     * @returns {Object} discordjs channel object of either the channel where the tweet is to be checked or the one where the request was made
+     */
+    getTwitterChannel() {
+        let rep = settings.general[this.message.guild.id].tweetCheckChannel;
+        if(rep === null || rep == false || rep === undefined) {
+            return this.message.channel;
+        } else {
+            return this.message.guild.channels.get(rep);
+        }
+    }
+
+    /**
      * This function actually does the bulk of the work, calls the necessary prepare function and chains the series of
      * following functions together
      */
     execute() {
-        let chan = this.message.channel;
+        let chan = this.getTwitterChannel();
         this.prepare()
             .then((reply) => {
                 chan.send(this.tweetFormSelect(reply))
