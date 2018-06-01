@@ -9,7 +9,7 @@ class How extends Ecommand {
     run() {
         return new Promise((resolve, reject) => {
             try {
-                let regex = new RegExp("^" + config.global.prefix + this.commandname + " (.+) is (.+[^\\?])\\??", "mi"),
+                let regex = new RegExp("^" + config.global.prefix + this.commandname + " (.+) (is|are) (.+[^\\?])\\??", "mi"),
                     theMatch = this.message.content.match(regex);
 
                 if(theMatch === null) {
@@ -19,7 +19,7 @@ class How extends Ecommand {
                     console.log(theMatch);
                     let number = Math.random() * Math.floor(100),
                         num = number.toFixed(2);
-                    this.reply = theMatch[1] + " is " + num + "% " + theMatch[2];
+                    this.reply = theMatch[3] + " " + theMatch[2] + " " + num + "% " + theMatch[1];
                     resolve(true)
                 }
             } catch (e) {
