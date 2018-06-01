@@ -71,9 +71,11 @@ class Settings {
     getSettings() {
         return new Promise((resolve, reject) => {
             let settings = {};
-            db.each("SELECT * FROM `serverSettings` WHERE `serverid` IN (?);", [this.guildstring], (err, row) => {
-                if(err !== null) logger.warn("error while getting settings for server : " + JSON.stringify(err));
-                else {
+            let sql = "SELECT * FROM `serverSettings` WHERE `serverid` IN (" + this.guildstring + ");";
+            db.each(sql, (err, row) => {
+                if(err !== null) {
+                    logger.warn("error while getting settings for server : " + JSON.stringify(err));
+                } else {
                     settings[row['serverid']] = row;
                     if(row.commandprefix === null || row.commandprefix === undefined || row.commandprefix == 0) {
                         settings[row['serverid']]['commandprefix'] = config.global.prefix;
