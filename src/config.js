@@ -12,9 +12,6 @@ const yaml    = require('js-yaml'),
       request = require('request'),
       rp = require('request-promise-native'),
 
-//gets values from config file
-    config = getConfig(),
-
 //set up Winston logger format
     myFormat = printf(info => {
         return `${info.timestamp} ${info.level}: ${info.message}`;
@@ -31,6 +28,11 @@ const yaml    = require('js-yaml'),
             new transports.File({ filename: 'config/combined.log' })
         ]
     }),
+
+//gets values from config file
+    config = getConfig(),
+
+
 
 //several necessary global constants, prefix should not be changed under any circumstance
     userReplace = "*" + config.global.replace,
