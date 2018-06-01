@@ -9,7 +9,7 @@ class Admin extends Ecommand {
 
     run() {
         return new Promise((resolve, reject) => {
-            if(this.message.author.id === settings.ownerid) {
+            if(this.message.author.id == config.discord.ownerid) {
                 let funcs = ["tweetchannel"];
                 try {
                     let regexMatch = this.message.content.match(new RegExp("^(\\S+) (\\w+) (\\S+)?( .*)?", "mi"));
