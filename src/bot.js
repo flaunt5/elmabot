@@ -22,12 +22,12 @@ discordClient.on("error", (error) => logger.error(error));
 
 discordClient.on("message", (message, user) => {
     //No talkie to other bots
-    if(message.author.bot) return;
-
-    console.dir(settings);
+    if(message.author.bot || message.channel.type === "dm") return;
 
     let commandMatch = message.content.match(prefix),
         serverId = message.guild.id;
+
+    console.log(settings);
 
     if (commandMatch !== null && commandMatch.length > 1 && settings.ready === true) {
         commands.run(commandMatch[1], message);
@@ -35,7 +35,9 @@ discordClient.on("message", (message, user) => {
 });
 
 discordClient.on('messageReactionAdd', (messReac, requester) => {
-    if (messReac.emoji.name === 'tweet') {
+    let guildId = messReac.message.guild.id,
+        tweetEmote = settings.general[guildId].tweetemote;
+    if (messReac.emoji.name === 'tweet' || messReac.emoji.name === tweetEmote) {
         let theMessage = new Tweet(messReac.message, requester);
         theMessage.execute();
     }
