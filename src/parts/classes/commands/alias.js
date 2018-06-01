@@ -38,7 +38,7 @@ class Alias extends Ecommand {
             this.getUserAlias(targetUser, alias)
                 .then((result) => {
                     if(result === false) {
-                        let insertStatement = db.prepare("INSERT INTO userAlias (server, userId, userName, userDiscrim, userAlias) VALUES (?, ?, ?, ?);");
+                        let insertStatement = db.prepare("INSERT INTO userAlias (server, userId, userName, userDiscrim, userAlias) VALUES (?, ?, ?, ?, ?);");
                         insertStatement.run([this.message.guild.id, targetUser.id, targetUser.username, targetUser.discriminator, alias], (re) => {
                             if(re === null || re === 'null') {
                                 this.reply = "Understood, <@" + targetUser.id + "> is now " + alias;
