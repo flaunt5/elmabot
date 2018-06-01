@@ -6,8 +6,10 @@ class Test extends Ecommand {
     }
 
     run() {
-        this.reply = "heyheyhey";
-        return true;
+        return new Promise(resolve => {
+                this.reply = "hi";
+                resolve(true)
+        });
     }
 }
 
