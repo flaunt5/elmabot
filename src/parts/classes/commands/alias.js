@@ -38,8 +38,8 @@ class Alias extends Ecommand {
             this.getUserAlias(targetUser, alias)
                 .then((result) => {
                     if(result === false) {
-                        let insertStatement = db.prepare("INSERT INTO userAlias (userId, userName, userDiscrim, userAlias) VALUES (?, ?, ?, ?);");
-                        insertStatement.run([targetUser.id, targetUser.username, targetUser.discriminator, alias], (re) => {
+                        let insertStatement = db.prepare("INSERT INTO userAlias (server, userId, userName, userDiscrim, userAlias) VALUES (?, ?, ?, ?);");
+                        insertStatement.run([this.message.guild.id, targetUser.id, targetUser.username, targetUser.discriminator, alias], (re) => {
                             if(re === null || re === 'null') {
                                 this.reply = "Understood, <@" + targetUser.id + "> is now " + alias;
                                 resolve(true);
@@ -62,7 +62,6 @@ class Alias extends Ecommand {
     }
 
     deleteAlias(targetUser, alias) {
-        console.log(alias);
         return new Promise((resolve, reject) => {
             this.getUserAlias(targetUser, alias)
                 .then((result) => {
