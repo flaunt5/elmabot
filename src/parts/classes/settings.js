@@ -73,7 +73,12 @@ class Settings {
             let settings = {};
             db.each("SELECT * FROM `serverSettings` WHERE `serverid` IN (?);", [this.guildstring], (err, row) => {
                 if(err !== null) logger.warn("error while getting settings for server : " + JSON.stringify(err));
-                else settings[row['serverid']] = row;
+                else {
+                    settings[row['serverid']] = row;
+                    if(row.commandprefix === null || row.commandprefix === undefined || row.commandprefix == 0) {
+                        settings[row['serverid']]['commandprefix'] = config.global.prefix;
+                    }
+                }
             }, (finErr) => {
                 if(finErr !== null) reject(finErr);
                 else resolve(settings);
@@ -120,7 +125,10 @@ class Settings {
                                 secIndex++;
                             })
                     }
-                    if(secIndex === guilds.length) this.general = settings
+                    if(secIndex === guilds.length) {
+                        this.general = settings;
+                        delete this._guilds;
+                    }
                 }
                 this.getRights()
                     .then((rights) => {
