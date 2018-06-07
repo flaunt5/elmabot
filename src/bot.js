@@ -32,9 +32,16 @@ discordClient.on("message", (message, user) => {
     }
 
     //if it's a markov it runs and exits
-    let markovComm = message.content.match(new RegExp("^(<@!" + discordClient.user.id + ">|" + config.global.name + ") (do|are) you (.*)\\?$"));
+    let markovComm = message.content.match(new RegExp("^(<@!?" + discordClient.user.id + ">|" + config.global.name + ") (do|are) you (.*)\\?$", "mi"));
     if(markovComm !== null && markovComm.length > 2) {
-        gibMarkov(markovComm[3], message.guild.id).then((rep) => message.channel.send(rep)).catch(() => message.reply("I'm sorry it seems like an error has occurred"));
+        message.channel.startTyping();
+        gibMarkov(markovComm[3], message.guild.id).then((rep) => {
+            message.channel.stopTyping();
+            message.channel.send(rep);
+        }).catch(() => {
+            message.channel.stopTyping();
+            message.reply("I'm sorry it seems like an error has occurred")
+        });
         return;
     }
 
