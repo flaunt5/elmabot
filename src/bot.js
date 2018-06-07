@@ -24,21 +24,18 @@ discordClient.on("message", (message, user) => {
     //No talkie to other bots
     if(message.author.bot || message.channel.type === "dm") return;
 
-    let commandMatch = message.content.match(prefix),
-        serverId = message.guild.id;
-
-    console.dir(message.content);
-    console.dir(discordClient.user.id);
-    console.dir(message.author.id);
-
+    //If it's a command it runs and exits the thing
+    let commandMatch = message.content.match(prefix);
     if (commandMatch !== null && commandMatch.length > 1 && settings.ready === true) {
         commands.run(commandMatch[1], message);
         return;
     }
 
-    let markovComm = message.content.match(new RegExp("^<@!" + discordClient.user.id + "> (do|are) you (.*)"));
-    if(markovComm !== null markovComm.length > 2) {
-        message.reply(gibMarkov(markovComm[2]));
+    //if it's a markov it runs and exits
+    let markovComm = message.content.match(new RegExp("^(<@!" + discordClient.user.id + ">|" + config.global.name + ") (do|are) you (.*)\\?$"));
+    if(markovComm !== null && markovComm.length > 2) {
+        gibMarkov(markovComm[3], message.guild.id).then((rep) => message.channel.send(rep)).catch(() => message.reply("I'm sorry it seems like an error has occurred"));
+        return;
     }
 
 });

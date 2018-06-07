@@ -44,25 +44,36 @@ function theNick(member) {
     }
 }
 
-function gibMarkov(input) {
-    if(typeof input !== "string") return false;
-    const Markov = new MarkovChain(fs.readFileSync("./res/markov/acidk.txt", "utf8"));
-    let len = Math.random() * (35 - 3) + 3,
-        chance = Math.floor(Math.random() * 100),
-        split = input.split(" ");
-    if(split.length > 2) {
-        let ran = Math.floor(Math.random() * split.length);
-        input = split[ran];
-    }
-    if(chance < 40) {
-        let set = Math.random() * (len - 1) + 1,
-            remain = len - set,
-            result = Markov.end(set).process();
+function gibMarkov(input, server) {
+    return new Promise((resolve, reject) => {
+        if(typeof input !== "string" || typeof server !== "string") reject(false);
+        let file;
+
+        try { file = fs.readFileSync("./res/markov/" + server + ".txt", "utf8"); }
+        catch (e) {
+            logger.error("error while trying to open file for markov : " + JSON.stringify(e));
+            reject(false);
+        }
+
+        const Markov = new MarkovChain(file);
+
+        let len = Math.floor(Math.random() * (50 - 3) + 3),
+            chance = Math.floor(Math.random() * 100),
+            split = input.split(" ");
+
+        if(split.length > 2) {
+            let ran = Math.floor(Math.random() * split.length);
+            input = split[ran];
+        }
+
+        if(chance < 60) {
+            let set = Math.floor(Math.random() * (len - 1) + 1),
+                remain = len - set,
+                result = Markov.end(set).process();
             result = result + " " + Markov.start(input).end(remain).process();
-            return result;
-
-    } else {
-        return Markov.start(input).end(len).process();
-    }
-
+            resolve(result);
+        } else {
+            resolve(Markov.start(input).end(len).process());
+        }
+    });
 }
