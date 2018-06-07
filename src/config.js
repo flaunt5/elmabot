@@ -11,6 +11,8 @@ const yaml    = require('js-yaml'),
       {combine, timestamp, label, printf} = format,
       request = require('request'),
       rp = require('request-promise-native'),
+      MarkovChain = require('markovchain'),
+
 
 //set up Winston logger format
     myFormat = printf(info => {

@@ -27,11 +27,20 @@ discordClient.on("message", (message, user) => {
     let commandMatch = message.content.match(prefix),
         serverId = message.guild.id;
 
-    console.log(settings);
+    console.dir(message.content);
+    console.dir(discordClient.user.id);
+    console.dir(message.author.id);
 
     if (commandMatch !== null && commandMatch.length > 1 && settings.ready === true) {
         commands.run(commandMatch[1], message);
+        return;
     }
+
+    let markovComm = message.content.match(new RegExp("^<@!" + discordClient.user.id + "> (do|are) you (.*)"));
+    if(markovComm !== null markovComm.length > 2) {
+        message.reply(gibMarkov(markovComm[2]));
+    }
+
 });
 
 discordClient.on('messageReactionAdd', (messReac, requester) => {
