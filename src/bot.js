@@ -32,7 +32,7 @@ discordClient.on("message", (message, user) => {
     }
 
     //if it's a markov it runs and exits
-    let markovComm = message.content.match(new RegExp("^(<@!?" + discordClient.user.id + ">|" + config.global.name + ") (do|are) you (.*)\\?$", "mi"));
+    let markovComm = message.content.match(new RegExp("^(<@!?" + discordClient.user.id + ">|" + config.global.name + "),? (do|are) you (.*)\\??$", "mi"));
     if(markovComm !== null && markovComm.length > 2) {
         message.channel.startTyping();
         gibMarkov(markovComm[3], message.guild.id).then((rep) => {
