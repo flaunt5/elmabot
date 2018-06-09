@@ -49,6 +49,7 @@ function gibMarkov(input, server) {
         if(typeof input !== "string" || typeof server !== "string") reject(false);
         let file;
 
+        input = input.replace(new RegExp("[.,\\/#!?$%\\^&\\*;:{}=\\-_`~()\\[\\]]", "i"), "");
         try { file = fs.readFileSync("./res/markov/" + server + ".txt", "utf8"); }
         catch (e) {
             logger.error("error while trying to open file for markov : " + JSON.stringify(e));

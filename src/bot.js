@@ -32,16 +32,11 @@ discordClient.on("message", (message, user) => {
     }
 
     //if it's a markov it runs and exits
-    let markovComm = message.content.match(new RegExp("^(<@!?" + discordClient.user.id + ">|" + config.global.name + "),? (do|are) you (.*)\\??$", "mi"));
+    let markovComm = message.content.match(new RegExp("^(<@!?" + discordClient.user.id + ">|" + config.global.name + ") (do|are) you (.+)$", "mi"));
     if(markovComm !== null && markovComm.length > 2) {
-        message.channel.startTyping();
-        gibMarkov(markovComm[3], message.guild.id).then((rep) => {
-            message.channel.stopTyping();
-            message.channel.send(rep);
-        }).catch(() => {
-            message.channel.stopTyping();
-            message.reply("I'm sorry it seems like an error has occurred")
-        });
+        gibMarkov(markovComm[3], message.guild.id)
+            .then((rep) => message.channel.send(rep))
+            .catch(() => message.reply("I'm sorry it seems like an error has occurred"));
         return;
     }
 
@@ -50,7 +45,7 @@ discordClient.on("message", (message, user) => {
 discordClient.on('messageReactionAdd', (messReac, requester) => {
     let guildId = messReac.message.guild.id,
         tweetEmote = settings.general[guildId].tweetemote;
-    if (messReac.emoji.name === 'tweet' || messReac.emoji.name === tweetEmote) {
+    if ((messReac.emoji.name === 'tweet' || messReac.emoji.name === tweetEmote) && messReac.count === 1) {
         let theMessage = new Tweet(messReac.message, requester);
         theMessage.execute();
     }
