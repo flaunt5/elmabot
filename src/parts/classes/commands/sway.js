@@ -3,7 +3,7 @@ class Sway extends Ecommand {
         super(message);
         this._commandname = "sway";
         this._desc = "Summons an appropriate visual representation";
-        this._syntax = config.global.prefix + this.commandname;
+        this._syntax = this.prefix + this.commandname;
     }
 
     run() {

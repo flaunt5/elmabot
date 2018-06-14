@@ -3,7 +3,7 @@ class How extends Ecommand {
         super(message);
         this._commandname = "how";
         this._desc = "tells you much X is Y in percentages";
-        this._syntax = config.global.prefix + this.commandname + " <what much something is> is <the something in question>";
+        this._syntax = this.prefix + this.commandname + " <what much something is> is <the something in question>";
     }
 
     run() {

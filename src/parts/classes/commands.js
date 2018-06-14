@@ -56,18 +56,22 @@ class Commands {
         let list = this.list;
         command = command.toLowerCase();
         if(list[command] !== undefined) {
+            let comm;
             try {
-                let comm = new list[command](message),
-                    result = await comm.run();
-                if(result) {
-                    comm.respond();
+                comm = new list[command](message);
+            } catch (e) {
+                logger.error(JSON.stringify(e));
+            }
+            try {
+                let result = await comm.run();
+                if(result) { comm.respond();
                 } else {
                     message.channel.send("I'm Sorry, but it seems like an error has occurred");
                     message.channel.stopTyping(true);
                     this.handleError("command found but error in execution", comm);
                 }
             } catch (e) {
-                logger.error(e);
+                logger.error(JSON.stringify(e));
                 message.channel.send("I'm Sorry, but it seems like an error has occurred");
                 message.channel.stopTyping(true);
             }

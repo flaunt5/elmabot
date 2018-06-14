@@ -3,7 +3,7 @@ class Help extends Ecommand {
         super(message);
         this._commandname = "help";
         this._desc = "Gives a list of commands or general information about them";
-        this._syntax = config.global.prefix + this.commandname + " <command>";
+        this._syntax = this.prefix + this.commandname + " <command>";
     }
 
     run() {
@@ -38,7 +38,7 @@ class Help extends Ecommand {
             }
             list += commands.formatlist[i] + toAdd + "\n";
         }
-        list += "```use " + config.global.prefix + "help with a specific command to get more information";
+        list += "```use " + this.prefix + "help with a specific command to get more information";
         return list;
     }
 

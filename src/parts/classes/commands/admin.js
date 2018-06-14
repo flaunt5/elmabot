@@ -3,7 +3,7 @@ class Admin extends Ecommand {
         super(message);
         this._commandname = "admin";
         this._desc = "A special administration command to configure a bot's settings";
-        this._syntax = config.global.prefix + this.commandname + " <parameter> <value>";
+        this._syntax = this.prefix + this.commandname + " <parameter> <value>";
         this.replyTo = true;
     }
 
@@ -33,7 +33,6 @@ class Admin extends Ecommand {
                         resolve(true);
                     }
                 } catch (e) {
-                    console.log(e);
                     this.reply = "I'm sorry I've encountered an error trying to read your command";
                     logger.error(JSON.stringify(e));
                     reject(false)
@@ -68,7 +67,6 @@ class Admin extends Ecommand {
                                             this.reply = "Tweet verification channel has been updated to <#" + theMatch[1] + ">";
                                             resolve(true);
                                         } else  {
-                                            console.log(err);
                                             reject(err);
                                         }
                                     });
@@ -89,7 +87,6 @@ class Admin extends Ecommand {
                     })
                 }
             } catch (e) {
-                console.log(e);
                 reject(e);}
         })
     }

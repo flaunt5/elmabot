@@ -44,6 +44,18 @@ function theNick(member) {
     }
 }
 
+function getPrefix(server) {
+    if(settings.general[server]['commandprefix'] == false || settings.general[server]['commandprefix'] == undefined) {
+        return config.global.prefix;
+    } else {
+        return settings.general[server]['commandprefix'];
+    }
+}
+
+function getPrefixRegex(server) {
+        return new RegExp("^" + getPrefix(server) + "(\\w+) ?(.*)?", "mi");
+}
+
 function gibMarkov(input, server) {
     return new Promise((resolve, reject) => {
         if(typeof input !== "string" || typeof server !== "string") reject(false);
