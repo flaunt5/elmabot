@@ -40,6 +40,12 @@ discordClient.on("message", (message, user) => {
         return;
     }
 
+    let quesComm = message.content.match(new RegExp("^(<@!?" + discordClient.user.id + ">|" + config.global.name + ").+\\?$", "mi"));
+    if(quesComm !== null) {
+        message.channel.send(eightball());
+        return;
+    }
+
 });
 
 discordClient.on('messageReactionAdd', (messReac, requester) => {
