@@ -1,6 +1,6 @@
 {
   "name": "elmabot",
-  "version": "1.0.0",
+  "version": "1.0.7",
   "description": "automated shitposting",
   "main": "app.js",
   "repository": {
@@ -15,7 +15,7 @@
     "twitter"
   ],
   "author": "Joris Brandt",
-  "license": "MIT",
+  "license": "AGPLv3",
   "homepage": "",
   "dependencies": {
     "discord.js": "^11.3.2",
