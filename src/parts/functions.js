@@ -96,8 +96,8 @@ function eightball() {
     try { responses = JSON.parse(fs.readFileSync("./res/eightball.json", "utf8")); }
     catch (e) { logger.error("error while trying to open file for eightball : " + e.toString()); return false; }
 
-    let chance = Math.floor(Math.random() * (100 - 1) + 1);
-    if(chance < 50) {
+    let chance = Math.round(Math.random());
+    if(chance === 1) {
         let begin = Math.floor(Math.random() * (responses.custom.begin.length - 1) + 1),
             end = Math.floor(Math.random() * (responses.custom.end.length - 1) + 1);
         return "🎱`" + responses.custom.begin[begin] + " " + responses.custom.end[end] + "`🎱";
