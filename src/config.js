@@ -12,6 +12,7 @@ const yaml    = require('js-yaml'),
       request = require('request'),
       rp = require('request-promise-native'),
       MarkovChain = require('markovchain'),
+      MarkovStrings = require('markov-strings'),
 
 
 //set up Winston logger format

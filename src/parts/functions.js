@@ -56,19 +56,31 @@ function getPrefixRegex(server) {
         return new RegExp("^" + getPrefix(server) + "(\\w+) ?(.*)?", "mi");
 }
 
+function getMarkovData(file) {
+    try {
+        let data = fs.readFileSync("./res/markov/" + file + ".txt", "utf8");
+        return data.split("\n");
+    }
+    catch (e) {
+        logger.error("error while trying to open file for markov : " + JSON.stringify(e));
+        return false;
+    }
+}
+
+// console.dir(getMarkovData(config.global.markov).length);
+//
+// const Markov = new MarkovStrings(getMarkovData(config.global.markov));
+// Markov.buildCorpusSync();
+// const result = Markov.generateSentenceSync({filter: result => {
+//     if(result.refs.length < 2) return false; else return true;
+//     }});
+// console.log(result);
+
 function gibMarkov(input, server) {
     return new Promise((resolve, reject) => {
         if(typeof input !== "string" || typeof server !== "string") reject(false);
-        let file;
 
         input = input.replace(new RegExp("[.,\\/#!?$%\\^&\\*;:{}=\\-_`~()\\[\\]]", "i"), "");
-        try { file = fs.readFileSync("./res/markov/" + server + ".txt", "utf8"); }
-        catch (e) {
-            logger.error("error while trying to open file for markov : " + JSON.stringify(e));
-            reject(false);
-        }
-
-        const Markov = new MarkovChain(file);
 
         let len = Math.floor(Math.random() * (50 - 3) + 3),
             chance = Math.floor(Math.random() * 100),
@@ -89,4 +101,8 @@ function gibMarkov(input, server) {
             resolve(Markov.start(input).end(len).process());
         }
     });
+}
+
+function makeMarkov(input, server) {
+
 }
