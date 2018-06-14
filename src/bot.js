@@ -25,7 +25,6 @@ discordClient.on("message", (message, user) => {
     if(message.author.bot || message.channel.type === "dm") return;
 
     //If it's a command it runs and exits the thing
-    let commandMatch = message.content.match(prefix);
     let commandMatch = message.content.match(getPrefixRegex(message.guild.id));
     if (commandMatch !== null && commandMatch.length > 1 && settings.ready === true) {
         commands.run(commandMatch[1], message);
