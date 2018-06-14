@@ -61,19 +61,23 @@ class Commands {
                 comm = new list[command](message);
             } catch (e) {
                 logger.error(JSON.stringify(e));
+                return false;
             }
+            let result;
             try {
-                let result = await comm.run();
-                if(result) { comm.respond();
-                } else {
-                    message.channel.send("I'm Sorry, but it seems like an error has occurred");
-                    message.channel.stopTyping(true);
-                    this.handleError("command found but error in execution", comm);
-                }
+                result = await comm.run();
             } catch (e) {
-                logger.error(JSON.stringify(e));
+                logger.error(e.toString());
                 message.channel.send("I'm Sorry, but it seems like an error has occurred");
                 message.channel.stopTyping(true);
+                return false;
+            }
+            if(result) {
+                comm.respond();
+            } else {
+                message.channel.send("I'm Sorry, but it seems like an error has occurred :(");
+                message.channel.stopTyping(true);
+                this.handleError("command found but error in execution", comm);
             }
         } else {
             message.reply("command not recognized");

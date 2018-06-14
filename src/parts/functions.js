@@ -64,7 +64,7 @@ function gibMarkov(input, server) {
         input = input.replace(new RegExp("[.,\\/#!?$%\\^&\\*;:{}=\\-_`~()\\[\\]]", "i"), "");
         try { file = fs.readFileSync("./res/markov/" + server + ".txt", "utf8"); }
         catch (e) {
-            logger.error("error while trying to open file for markov : " + JSON.stringify(e));
+            logger.error("error while trying to open file for markov : " + e.toString());
             reject(false);
         }
 
@@ -94,7 +94,7 @@ function gibMarkov(input, server) {
 function eightball() {
     let responses;
     try { responses = JSON.parse(fs.readFileSync("./res/eightball.json", "utf8")); }
-    catch (e) { logger.error("error while trying to open file for eightball : " + JSON.stringify(e)); return false; }
+    catch (e) { logger.error("error while trying to open file for eightball : " + e.toString()); return false; }
 
     let chance = Math.floor(Math.random() * (100 - 1) + 1);
     if(chance < 50) {
