@@ -212,13 +212,11 @@ class Tweet {
     findUserAlias(content) {
         return new Promise((resolve) => {
             db.each("SELECT userAlias AS alias FROM userAlias", (err, row) => {
-                let match = content.match(row.alias);
+                let match = content.match(new RegExp("\\b(" + row.alias + ")\\b", "ig"));
                 if (match) {
-                    content = content.replace(match[0], userReplace);
+                    content = content.replace(new RegExp("\\b(" + row.alias + ")\\b", "ig"), userReplace);
                 }
-            }, () => {
-                resolve(content)
-            });
+            }, () => resolve(content));
         });
     }
 
