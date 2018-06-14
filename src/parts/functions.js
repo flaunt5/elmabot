@@ -81,6 +81,11 @@ function gibMarkov(input, server) {
         if(typeof input !== "string" || typeof server !== "string") reject(false);
 
         input = input.replace(new RegExp("[.,\\/#!?$%\\^&\\*;:{}=\\-_`~()\\[\\]]", "i"), "");
+        try { file = fs.readFileSync("./res/markov/" + server + ".txt", "utf8"); }
+        catch (e) {
+            logger.error("error while trying to open file for markov : " + e.toString());
+            reject(false);
+        }
 
         let len = Math.floor(Math.random() * (50 - 3) + 3),
             chance = Math.floor(Math.random() * 100),
