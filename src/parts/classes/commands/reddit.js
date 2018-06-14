@@ -3,7 +3,7 @@ class Reddit extends Ecommand {
         super(message);
         this._commandname = "reddit";
         this._desc = "gets a random post from a specified subreddit";
-        this._syntax = config.global.prefix + this.commandname;
+        this._syntax = this.prefix + this.commandname;
         this._forbidden = ["watchpeopledie", "kotakuinaction", "physicalremoval", "braincels", "redpill", "drama", "gamerghazi"];
         this._domains = ["i.redd.it", "i.imgur.com", "gfycat.com"]
     }

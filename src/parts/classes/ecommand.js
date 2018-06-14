@@ -1,9 +1,11 @@
 class Ecommand {
     constructor(message) {
+        this._message = message;
+        this._server = this.message.guild.id;
+        this._prefix = getPrefix(this.server);
         this._commandname = "command";
         this._desc ="This command doesn't have a description yet";
-        this._syntax= config.global.prefix + this.commandname;
-        this._message = message;
+        this._syntax= this.prefix + this.commandname;
         this._params = this.getParams();
         this._reply = '';
         this._member = message.member;
@@ -13,6 +15,14 @@ class Ecommand {
 
     get message() {
         return this._message;
+    }
+
+    get server() {
+        return this._server;
+    }
+
+    get prefix() {
+        return this._prefix;
     }
 
     get commandname() {
@@ -68,7 +78,8 @@ class Ecommand {
      * @returns {array}
      */
     getParams() {
-        let string = this.message.content.match(prefix)[2];
+        let string = this.message.content.match(getPrefixRegex(this.message.guild.id));
+        string = string[2];
         if(string !== undefined) {
             return string.split(" ");
         } else {

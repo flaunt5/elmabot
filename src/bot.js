@@ -25,7 +25,7 @@ discordClient.on("message", (message, user) => {
     if(message.author.bot || message.channel.type === "dm") return;
 
     //If it's a command it runs and exits the thing
-    let commandMatch = message.content.match(prefix);
+    let commandMatch = message.content.match(getPrefixRegex(message.guild.id));
     if (commandMatch !== null && commandMatch.length > 1 && settings.ready === true) {
         commands.run(commandMatch[1], message);
         return;
@@ -37,6 +37,12 @@ discordClient.on("message", (message, user) => {
         gibMarkov(markovComm[3], message.guild.id)
             .then((rep) => message.channel.send(rep))
             .catch(() => message.reply("I'm sorry it seems like an error has occurred"));
+        return;
+    }
+
+    let quesComm = message.content.match(new RegExp("^(<@!?" + discordClient.user.id + ">|" + config.global.name + ").+\\?$", "mi"));
+    if(quesComm !== null) {
+        message.channel.send(eightball());
         return;
     }
 

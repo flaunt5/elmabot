@@ -39,7 +39,6 @@ const yaml    = require('js-yaml'),
 //several necessary global constants, prefix should not be changed under any circumstance
     userReplace = "*" + config.global.replace,
     roleReplace = userReplace + "s",
-    prefix = new RegExp("^" + config.global.prefix + "(\\w+) ?(.*)?", "mi"),
 
 //set up database, needs actual database to exist or else bot gets unhappy
     db = new sqlite.Database("./config/db.sqlite"),

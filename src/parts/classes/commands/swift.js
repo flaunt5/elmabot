@@ -3,7 +3,7 @@ class Swift extends Ecommand {
         super(message);
         this._commandname = "swift";
         this._desc = "Fetch me some Taytay";
-        this._syntax = config.global.prefix + this.commandname;
+        this._syntax = this.prefix + this.commandname;
     }
 
     run() {

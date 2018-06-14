@@ -44,6 +44,18 @@ function theNick(member) {
     }
 }
 
+function getPrefix(server) {
+    if(settings.general[server]['commandprefix'] == false || settings.general[server]['commandprefix'] == undefined) {
+        return config.global.prefix;
+    } else {
+        return settings.general[server]['commandprefix'];
+    }
+}
+
+function getPrefixRegex(server) {
+        return new RegExp("^" + getPrefix(server) + "(\\w+) ?(.*)?", "mi");
+}
+
 function gibMarkov(input, server) {
     return new Promise((resolve, reject) => {
         if(typeof input !== "string" || typeof server !== "string") reject(false);
@@ -52,7 +64,7 @@ function gibMarkov(input, server) {
         input = input.replace(new RegExp("[.,\\/#!?$%\\^&\\*;:{}=\\-_`~()\\[\\]]", "i"), "");
         try { file = fs.readFileSync("./res/markov/" + server + ".txt", "utf8"); }
         catch (e) {
-            logger.error("error while trying to open file for markov : " + JSON.stringify(e));
+            logger.error("error while trying to open file for markov : " + e.toString());
             reject(false);
         }
 
@@ -77,4 +89,20 @@ function gibMarkov(input, server) {
             resolve(Markov.start(input).end(len).process());
         }
     });
+}
+
+function eightball() {
+    let responses;
+    try { responses = JSON.parse(fs.readFileSync("./res/eightball.json", "utf8")); }
+    catch (e) { logger.error("error while trying to open file for eightball : " + e.toString()); return false; }
+
+    let chance = Math.floor(Math.random() * (100 - 1) + 1);
+    if(chance < 50) {
+        let begin = Math.floor(Math.random() * (responses.custom.begin.length - 1) + 1),
+            end = Math.floor(Math.random() * (responses.custom.end.length - 1) + 1);
+        return "🎱`" + responses.custom.begin[begin] + " " + responses.custom.end[end] + "`🎱";
+    } else {
+        let num = Math.floor(Math.random() * (responses.standalone.length - 1) + 1);
+        return "🎱`" + responses.standalone[num] + "`🎱";
+    }
 }

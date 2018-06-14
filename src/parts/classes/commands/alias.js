@@ -3,13 +3,12 @@ class Alias extends Ecommand {
         super(message);
         this._commandname = "alias";
         this._desc = "Assigns or removes an alias for a discord user";
-        this._syntax = config.global.prefix + this.commandname + " <@discord user> is/isn't <new alias>";
+        this._syntax = this.prefix + this.commandname + " <@discord user> is/isn't <new alias>";
     }
 
    run() {
         return new Promise((resolve, reject) => {
-            let theMatch = this.message.content.match(new RegExp("^" + config.global.prefix + "\\w+ (\\S+) (is|isn'?t) (\\w+) ?(\\w+)?", "mi"));
-            console.log(theMatch);
+            let theMatch = this.message.content.match(new RegExp("^" + this.prefix + "\\w+ (\\S+) (is|isn'?t) (\\w+) ?(\\w+)?", "mi"));
             if(theMatch !== null && theMatch.length > 3) {
                 resolve(this.userAlias(theMatch));
             } else {
@@ -110,8 +109,6 @@ class Alias extends Ecommand {
             } else if(theMatch[2] === "isn't" || theMatch[2] === "isnt") {
                return await this.deleteAlias(targetUser, theMatch[3]);
             } else if(theMatch[2] === "is" && theMatch[3] === "not") {
-                console.log(theMatch);
-                console.log(theMatch[4]);
                 return await this.deleteAlias(targetUser, theMatch[4])
             } else {
                 this.reply = "Error in the alias command, are you sure you wrote it correctly?";
