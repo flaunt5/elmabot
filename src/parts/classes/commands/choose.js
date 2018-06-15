@@ -10,7 +10,7 @@ class Choose extends Ecommand {
         return new Promise((resolve, reject) => {
             let bits;
             try {
-                bits = this.message.content.match(new RegExp("^(" + this.prefix + "\\w+) (.+)"));
+                bits = this.message.content.match(new RegExp("^(" + this.prefix + "\\w+) (.+)", "gi"));
             } catch (e) {
                 reject(e);
             }
