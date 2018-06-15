@@ -15,12 +15,20 @@
     "twitter"
   ],
   "author": "Joris Brandt",
-  "license": "AGPLv3",
+  "license": "AGPL-3.0",
   "homepage": "",
   "dependencies": {
     "discord.js": "^11.3.2",
     "fs": "0.0.1-security",
+    "gulp": "^3.9.1",
+    "gulp-cli": "^1.4.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-merge": "^0.1.1",
+    "gulp-sourcemaps": "^2.6.4",
+    "gulp-uglify-es": "^1.0.1",
+    "gulp-util": "^3.0.8",
     "js-yaml": "^3.11.0",
+    "lodash": "^4.17.10",
     "markovchain": "^1.0.2",
     "request": "^2.85.0",
     "request-promise-native": "^1.0.5",
@@ -31,13 +39,8 @@
   "optionalDependencies": {
     "bufferutil": "^3.0.3"
   },
-  "devDependencies": {
-    "gulp": "^3.9.1",
-    "gulp-cli": "^1.4.0",
-    "gulp-concat": "^2.6.1",
-    "gulp-merge": "^0.1.1",
-    "gulp-sourcemaps": "^2.6.4",
-    "gulp-uglify-es": "^1.0.1",
-    "gulp-util": "^3.0.8"
+  "devDependencies": {},
+  "scripts": {
+    "install": "gulp build"
   }
 }
