@@ -12,6 +12,7 @@ const yaml    = require('js-yaml'),
       request = require('request'),
       rp = require('request-promise-native'),
       MarkovChain = require('markovchain'),
+      Kaori = require('kaori'),
 
 
 //set up Winston logger format

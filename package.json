@@ -28,6 +28,7 @@
     "gulp-uglify-es": "^1.0.1",
     "gulp-util": "^3.0.8",
     "js-yaml": "^3.12.0",
+    "kaori": "^1.1.4",
     "lodash": "^4.17.10",
     "markovchain": "^1.0.2",
     "request": "^2.85.0",
