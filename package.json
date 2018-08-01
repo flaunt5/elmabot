@@ -21,7 +21,7 @@
     "discord.js": "^11.3.2",
     "fs": "0.0.1-security",
     "gulp": "^4.0.0",
-    "gulp-cli": "^2.0.1",
+    "gulp-cli": "github:gulpjs/gulp-cli",
     "gulp-concat": "^2.6.1",
     "gulp-merge": "^0.1.1",
     "gulp-sourcemaps": "^2.6.4",
